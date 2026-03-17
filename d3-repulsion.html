@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Repulsion - Cecilia Liu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .instructions-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .instruction-card {
+            border: 2px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            transition: border-color 0.3s ease;
+        }
+        .instruction-card:hover { border-color: var(--accent-color); }
+        .instruction-card .icon { font-size: 1.6rem; margin-bottom: 0.6rem; display: block; }
+        .instruction-card h4 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem; font-weight: 700;
+            color: var(--accent-color); margin-bottom: 0.4rem;
+        }
+        .instruction-card p {
+            font-size: 0.9rem; color: var(--secondary-color);
+            font-weight: 300; line-height: 1.6;
+        }
+        #canvas-wrap {
+            border: 3px solid var(--accent-color);
+            position: relative; cursor: crosshair;
+            background: #fafafa; overflow: hidden;
+        }
+        #vis { display: block; width: 100%; }
+        .d3-hud {
+            position: absolute; top: 1rem; right: 1rem;
+            display: flex; flex-direction: column;
+            gap: 0.4rem; align-items: flex-end;
+            pointer-events: none; z-index: 10;
+        }
+        .hud-tag {
+            background: var(--accent-color); color: var(--white);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem; font-weight: 700;
+            padding: 0.3rem 0.8rem; letter-spacing: 0.05em;
+        }
+        #clearBtn {
+            position: absolute; bottom: 1rem; right: 1rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem; font-weight: 700;
+            padding: 0.5rem 1.5rem; background: transparent;
+            border: 2px solid var(--accent-color); color: var(--accent-color);
+            cursor: pointer; transition: all 0.3s ease; z-index: 10;
+        }
+        #clearBtn:hover { background: var(--accent-color); color: var(--white); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <h1 class="logo">Portfolio</h1>
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="index.html" class="nav-link">About</a></li>
+            <li><a href="index.html" class="nav-link">Education</a></li>
+            <li><a href="index.html" class="nav-link">Skills</a></li>
+            <li><a href="index.html" class="nav-link">Experience</a></li>
+            <li><a href="index.html" class="nav-link">Contact</a></li>
+            <li><a href="visualizations.html" class="nav-link viz-link">Visualizations</a></li>
+            <li><a href="d3-repulsion.html" class="nav-link active viz-link">D3 Lab</a></li>
+        </ul>
+    </div>
+</nav>
+
+<section class="viz-hero">
+    <div class="container">
+        <h1 class="viz-hero-title">D3 Repulsion</h1>
+        <p class="viz-hero-subtitle">IAT 355 — Assignment 4 &nbsp;·&nbsp; Option 3: Mouse Repulsion</p>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="container">
+        <div class="viz-card">
+            <div class="viz-header">
+                <h2 class="viz-title">Assignment Overview</h2>
+                <p class="viz-description">
+                    This page extends the D3 animation example built in class (Lab T3).
+                    I chose <strong>Option 3</strong>: every click adds a new circle to the canvas,
+                    and shapes are repelled away from the mouse pointer in real-time using a
+                    physics-based force simulation built with D3 v7.
+                </p>
+            </div>
+            <div class="dataset-stats">
+                <div class="stat-box">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Option Chosen</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">20</span>
+                    <span class="stat-label">Max Shapes</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">~60fps</span>
+                    <span class="stat-label">Physics Loop</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">D3 v7</span>
+                    <span class="stat-label">Library</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="viz-card">
+            <div class="viz-header">
+                <h2 class="viz-title">Interactive Canvas</h2>
+                <p class="viz-description">
+                    Click on the canvas to spawn circles. Hover near any shape to repel it —
+                    the closer the mouse, the stronger the push. Circles bounce off the edges
+                    and slowly come to rest.
+                </p>
+            </div>
+
+            <div class="instructions-row">
+                <div class="instruction-card">
+                    <span class="icon">&#9711;</span>
+                    <h4>Click to Add</h4>
+                    <p>Click anywhere on the canvas to spawn a new circle at that exact position.</p>
+                </div>
+                <div class="instruction-card">
+                    <span class="icon">&#8644;</span>
+                    <h4>Hover to Repel</h4>
+                    <p>Move your mouse near any circle — it gets pushed away with physics-based force.</p>
+                </div>
+                <div class="instruction-card">
+                    <span class="icon">&#8617;</span>
+                    <h4>Wall Bounce</h4>
+                    <p>Shapes bounce off the canvas edges and gradually decelerate to a stop.</p>
+                </div>
+                <div class="instruction-card">
+                    <span class="icon">&#8856;</span>
+                    <h4>Max 20 Shapes</h4>
+                    <p>Once 20 shapes are on screen, the oldest one is automatically removed.</p>
+                </div>
+            </div>
+
+            <div id="canvas-wrap">
+                <div class="d3-hud">
+                    <div class="hud-tag">shapes: <span id="count">0</span> / 20</div>
+                    <div class="hud-tag">option 3</div>
+                </div>
+                <svg id="vis"></svg>
+                <button id="clearBtn">Clear All</button>
+            </div>
+
+            <div class="viz-insights">
+                <h4>Implementation Notes</h4>
+                <p><strong>Repulsion model:</strong> Each frame, the distance between the mouse and every circle
+                is computed. If within the repulsion radius (120px), a force vector pointing away from the mouse
+                is added to the circle's velocity. The force uses a squared falloff — (1 - dist/radius)^2 —
+                so it feels smooth and organic rather than abrupt.</p>
+                <p><strong>Physics:</strong> Velocity is damped by 0.80x each tick (~60fps) so circles gradually
+                slow down and settle after being pushed. Bouncing off walls reverses the relevant velocity
+                component with a small energy loss (0.5x) to prevent infinite oscillation.</p>
+                <p><strong>D3 role:</strong> D3 handles the spawn animation (pop-in with overshoot via
+                d3.easeBackOut) and SVG element lifecycle. Per-frame position updates use a manual setInterval
+                loop that directly sets cx/cy attributes — showing where D3's declarative model hands off
+                to imperative animation logic.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2026 Cecilia.</p>
+        <p>
+            <a href="index.html" class="footer-link">Back to Home</a>
+            &nbsp;&nbsp;·&nbsp;&nbsp;
+            <a href="visualizations.html" class="footer-link">Visualizations</a>
+        </p>
+    </div>
+</footer>
+
+<script type="module">
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+const MAX_SHAPES   = 20;
+const REPEL_RADIUS = 120;
+const REPEL_FORCE  = 20;
+const DAMPING      = 0.80;
+const WALL_BOUNCE  = 0.50;
+const TICK_MS      = 16;
+const BORDER_PAD   = 18;
+
+const FILL_COLORS = [
+    "#1a1a1a","#3a3a3a","#555555","#777777",
+    "#999999","#bbbbbb","#000000","#444444"
+];
+
+const wrap    = document.getElementById("canvas-wrap");
+const svg     = d3.select("#vis");
+const countEl = document.getElementById("count");
+
+let W, H;
+function resize() {
+    W = wrap.clientWidth;
+    H = Math.min(520, Math.max(320, window.innerHeight * 0.58));
+    svg.attr("width", W).attr("height", H);
+}
+resize();
+window.addEventListener("resize", resize);
+
+let shapes = [], mouseX = -9999, mouseY = -9999, idCounter = 0;
+
+svg.on("mousemove", (event) => { [mouseX, mouseY] = d3.pointer(event); });
+svg.on("mouseleave", () => { mouseX = -9999; mouseY = -9999; });
+svg.on("click", (event) => {
+    const [cx, cy] = d3.pointer(event);
+    addCircle(cx, cy);
+});
+
+function addCircle(cx, cy) {
+    if (shapes.length >= MAX_SHAPES) {
+        const oldest = shapes.shift();
+        oldest.el.transition().duration(150)
+            .attr("r", 0).attr("opacity", 0).remove();
+    }
+    const id    = idCounter++;
+    const color = FILL_COLORS[id % FILL_COLORS.length];
+    const r     = Math.random() * 18 + 10;
+
+    const el = svg.append("circle")
+        .attr("r", 0).attr("cx", cx).attr("cy", cy)
+        .attr("fill", color).attr("opacity", 0.88)
+        .style("pointer-events", "none");
+
+    el.transition().duration(350)
+        .ease(d3.easeBackOut.overshoot(1.6))
+        .attr("r", r);
+
+    shapes.push({ id, x: cx, y: cy, r, vx: 0, vy: 0, color, el });
+    countEl.textContent = shapes.length;
+}
+
+setInterval(() => {
+    if (!shapes.length) return;
+    for (const s of shapes) {
+        const dx = s.x - mouseX, dy = s.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < REPEL_RADIUS && dist > 0.5) {
+            const t = 1 - dist / REPEL_RADIUS;
+            const strength = REPEL_FORCE * t * t;
+            s.vx += (dx / dist) * strength;
+            s.vy += (dy / dist) * strength;
+        }
+        s.vx *= DAMPING; s.vy *= DAMPING;
+        s.x  += s.vx;   s.y  += s.vy;
+        const pad = s.r + BORDER_PAD;
+        if (s.x < pad)     { s.x = pad;     s.vx =  Math.abs(s.vx) * WALL_BOUNCE; }
+        if (s.x > W - pad) { s.x = W - pad; s.vx = -Math.abs(s.vx) * WALL_BOUNCE; }
+        if (s.y < pad)     { s.y = pad;     s.vy =  Math.abs(s.vy) * WALL_BOUNCE; }
+        if (s.y > H - pad) { s.y = H - pad; s.vy = -Math.abs(s.vy) * WALL_BOUNCE; }
+        s.el.attr("cx", s.x).attr("cy", s.y);
+    }
+}, TICK_MS);
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+    for (const s of shapes)
+        s.el.transition().duration(200).attr("r", 0).attr("opacity", 0).remove();
+    shapes = [];
+    countEl.textContent = 0;
+});
+
+setTimeout(() => {
+    [[0.20,0.40],[0.50,0.30],[0.72,0.55],[0.35,0.68],[0.80,0.28],[0.15,0.65]]
+        .forEach(([rx, ry]) => addCircle(rx * W, ry * H));
+}, 450);
+</script>
+</body>
+</html>

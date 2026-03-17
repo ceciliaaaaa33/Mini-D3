@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualizations - Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">Portfolio</h1>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="index.html" class="nav-link">About</a></li>
+                <li><a href="index.html" class="nav-link">Education</a></li>
+                <li><a href="index.html" class="nav-link">Skills</a></li>
+                <li><a href="index.html" class="nav-link">Experience</a></li>
+                <li><a href="index.html" class="nav-link">Contact</a></li>
+                <li><a href="visualizations.html" class="nav-link active viz-link">Visualizations</a></li>
+                <li><a href="d3-repulsion.html" class="nav-link viz-link">D3 Lab</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="viz-hero">
+        <div class="container">
+            <h1 class="viz-hero-title">Data Visualizations</h1>
+            <p class="viz-hero-subtitle">Survey Data Analysis - Interactive Vega-Lite Charts</p>
+        </div>
+    </section>
+
+    <!-- Dataset Overview -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="viz-card">
+                <div class="viz-header">
+                    <h2 class="viz-title">Dataset Overview</h2>
+                    <p class="viz-description">
+                        This analysis explores patterns in survey responses from 62 participants,
+                        covering entertainment preferences, lifestyle habits, and personal opinions
+                        collected in February 2026.
+                    </p>
+                </div>
+                <div class="dataset-stats">
+                    <div class="stat-box">
+                        <span class="stat-number">62</span>
+                        <span class="stat-label">Responses</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">10</span>
+                        <span class="stat-label">Variables</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">~360</span>
+                        <span class="stat-label">Avg Screen Time (min)</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">~70%</span>
+                        <span class="stat-label">Avg Tiredness</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization 1 -->
+    <section class="section">
+        <div class="container">
+            <div class="viz-card">
+                <div class="viz-header">
+                    <h2 class="viz-title">Visualization 1: Video Game Genre Preferences</h2>
+                    <div class="viz-questions">
+                        <p><strong>Question 1:</strong> What is the distribution of video game genre preferences among respondents?</p>
+                        <p><strong>Question 2:</strong> Which genres are most and least popular in this sample?</p>
+                    </div>
+                    <p class="viz-description">A bar chart showing the frequency distribution of preferred video game genres.</p>
+                </div>
+                <div class="viz-container" id="vis1"></div>
+                <div class="viz-insights">
+                    <h4>Design Choices &amp; Insights</h4>
+                    <p><strong>Why this visualization:</strong> Bar charts effectively show frequency distributions
+                    for categorical data, making it easy to compare popularity across genres.</p>
+                    <p><strong>Key Insights:</strong> Action and Shooter genres dominate preferences with 10+ respondents each,
+                    while Sports and Simulation genres are less common. This suggests a preference for high-intensity,
+                    immersive gaming experiences among the surveyed group.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization 2 -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="viz-card">
+                <div class="viz-header">
+                    <h2 class="viz-title">Visualization 2: Screen Time vs Phone Battery</h2>
+                    <div class="viz-questions">
+                        <p><strong>Question 1:</strong> Is there a relationship between daily screen time and phone battery level?</p>
+                        <p><strong>Question 2:</strong> Do people with higher screen time tend to have lower battery levels?</p>
+                    </div>
+                    <p class="viz-description">A scatter plot with regression line exploring the correlation between screen time and battery level.</p>
+                </div>
+                <div class="viz-container" id="vis2"></div>
+                <div class="viz-insights">
+                    <h4>Design Choices &amp; Insights</h4>
+                    <p><strong>Why this visualization:</strong> Scatter plots reveal correlations between continuous variables and help identify outliers.</p>
+                    <p><strong>Key Insights:</strong> A weak negative correlation exists - higher screen time users
+                    sometimes have lower battery levels, though the relationship isn't strong. Some outliers show
+                    extreme screen time (&gt;1000 min), which may be data entry errors.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization 3 -->
+    <section class="section">
+        <div class="container">
+            <div class="viz-card">
+                <div class="viz-header">
+                    <h2 class="viz-title">Visualization 3: Entertainment Ratings Comparison</h2>
+                    <div class="viz-questions">
+                        <p><strong>Question 1:</strong> How do ratings for One Piece, Taylor Swift, and Marvel Movies compare?</p>
+                        <p><strong>Question 2:</strong> What is the distribution and average rating for each entertainment category?</p>
+                    </div>
+                    <p class="viz-description">Box plots comparing the distribution of ratings across three entertainment categories.</p>
+                </div>
+                <div class="viz-container" id="vis3"></div>
+                <div class="viz-insights">
+                    <h4>Design Choices &amp; Insights</h4>
+                    <p><strong>Why this visualization:</strong> Box plots effectively show distribution, median,
+                    quartiles, and outliers, perfect for comparing multiple numerical variables.</p>
+                    <p><strong>Key Insights:</strong> One Piece and Marvel Movies show similar rating distributions
+                    with medians around 5-6. Taylor Swift ratings are slightly more varied. All three have outliers
+                    at both extremes, indicating polarized opinions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization 4 -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="viz-card">
+                <div class="viz-header">
+                    <h2 class="viz-title">Visualization 4: Tiredness Levels by Favorite Food</h2>
+                    <div class="viz-questions">
+                        <p><strong>Question 1:</strong> Does favorite food choice correlate with tiredness levels?</p>
+                        <p><strong>Question 2:</strong> Are there patterns between dietary preferences and energy levels?</p>
+                    </div>
+                    <p class="viz-description">A grouped bar chart examining the relationship between food preferences and average tiredness.</p>
+                </div>
+                <div class="viz-container" id="vis4"></div>
+                <div class="viz-insights">
+                    <h4>Design Choices &amp; Insights</h4>
+                    <p><strong>Why this visualization:</strong> Grouped bar charts allow comparison across categories
+                    while maintaining readability with color-coded values.</p>
+                    <p><strong>Key Insights:</strong> Most respondents report high tiredness (70-100%) regardless of
+                    food preference. The universal high tiredness suggests external factors (likely academic workload)
+                    affect all groups similarly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Temperature SVG -->
+    <section class="section">
+        <div class="container">
+            <div class="viz-card">
+                <div class="viz-header">
+                    <h2 class="viz-title">Monthly Temperature Trends (SVG)</h2>
+                    <p class="viz-description">
+                        An interactive SVG bar chart showing average monthly temperatures throughout the year.
+                        Hover over the bars to see detailed information.
+                    </p>
+                </div>
+                <div class="viz-container" id="temperatureViz"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Cecilia.</p>
+            <p><a href="index.html" class="footer-link">Back to Home</a></p>
+        </div>
+    </footer>
+
+    <script src="vis.js"></script>
+    <script src="vega-charts.js"></script>
+</body>
+</html>
